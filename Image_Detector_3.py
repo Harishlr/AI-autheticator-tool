@@ -24,13 +24,6 @@ def load_models():
 
 m_a, m_b = load_models()
 
-# st.title("🛡️ ACEPRO Mobile Authenticator")
-
-# --- AUTO-RUN LOGIC ---
-# The 'label_visibility' makes it cleaner on small screens
-#img_file = st.file_uploader("Select or Capture Media", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
-
-
 st.title("🛡️ ACEPRO Field Authenticator")
 
 # Create two modes: one for high-quality files, one for "Screen Snaps"
@@ -44,14 +37,35 @@ else:
     # This opens the camera directly inside the app
     img_file = st.camera_input("Point at the screen and snap")
 
+# CRITICAL: Everything below must be indented under this IF statement
 if img_file:
     img = Image.open(img_file)
     
-    # 🧪 PRO-TIP: We convert to RGB to strip out any weird "Screen Metadata"
+    # PRO-TIP: We convert to RGB to strip out any weird "Screen Metadata"
     img = img.convert("RGB") 
     
-    with st.spinner("🕵️ Analyzing..."):
-        # ... (rest of your analysis logic)
+    with st.spinner("🕵️ Analyzing pixels and frequency..."):
+        # Run both models
+        res_a = m_a(img)[0]
+        res_b = m_b(img)[0]
+        
+        is_ai_a = res_a['label'].lower() in ['artificial', 'generated', 'fake']
+        is_ai_b = res_b['label'].lower() in ['artificial', 'generated', 'fake']
+
+        st.divider()
+        
+        if is_ai_a and is_ai_b:
+            st.error(f"### Verdict: HIGH PROBABILITY AI ({res_a['score']:.1%})")
+        elif is_ai_a or is_ai_b:
+            st.warning("### Verdict: INCONCLUSIVE / EDITED")
+            st.write("Models disagree. This often happens with photos of screens.")
+        else:
+            st.success(f"### Verdict: LIKELY REAL ({1 - res_a['score']:.1%})")
+
+        # Technical breakdown for your records
+        with st.expander("See Technical Details"):
+            st.write(f"Model A: {res_a['label']} ({res_a['score']:.2%})")
+            st.write(f"Model B: {res_b['label']} ({res_b['score']:.2%})")
 
 
 
