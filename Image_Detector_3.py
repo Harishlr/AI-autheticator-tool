@@ -5,8 +5,6 @@ import cv2
 import tempfile
 import os
 
-
-
 # 1. Page Setup
 st.set_page_config(page_title="ACEPRO Authenticator", page_icon="🛡️", layout="centered")
 
