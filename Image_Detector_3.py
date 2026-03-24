@@ -5,16 +5,6 @@ import cv2
 import tempfile
 import os
 
-# This makes the "Upload" button trigger the Phone's Camera or Gallery instantly
-img_file = st.file_uploader("Capture or Select Media", type=['jpg', 'png', 'jpeg'], accept_multiple_files=False)
-
-if img_file:
-    # Auto-run analysis the moment the file is selected (no extra button click needed)
-    run_analysis(img_file)
-
-
-
-
 
 
 # 1. Page Setup
