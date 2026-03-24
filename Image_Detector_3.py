@@ -24,11 +24,36 @@ def load_models():
 
 m_a, m_b = load_models()
 
-st.title("🛡️ ACEPRO Mobile Authenticator")
+# st.title("🛡️ ACEPRO Mobile Authenticator")
 
 # --- AUTO-RUN LOGIC ---
 # The 'label_visibility' makes it cleaner on small screens
-img_file = st.file_uploader("Select or Capture Media", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
+#img_file = st.file_uploader("Select or Capture Media", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
+
+
+st.title("🛡️ ACEPRO Field Authenticator")
+
+# Create two modes: one for high-quality files, one for "Screen Snaps"
+mode = st.radio("Select Input:", ["Direct Upload", "Live Snap (Best for Screens)"], horizontal=True)
+
+img_file = None
+
+if mode == "Direct Upload":
+    img_file = st.file_uploader("Upload Original File", type=['jpg', 'png', 'jpeg'])
+else:
+    # This opens the camera directly inside the app
+    img_file = st.camera_input("Point at the screen and snap")
+
+if img_file:
+    img = Image.open(img_file)
+    
+    # 🧪 PRO-TIP: We convert to RGB to strip out any weird "Screen Metadata"
+    img = img.convert("RGB") 
+    
+    with st.spinner("🕵️ Analyzing..."):
+        # ... (rest of your analysis logic)
+
+
 
 if img_file:
     img = Image.open(img_file)
